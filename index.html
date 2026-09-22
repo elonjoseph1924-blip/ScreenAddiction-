@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Is the phone using you? — Screen De-addiction self-check</title>
+<meta name="description" content="Twelve quick questions about ordinary moments with your phone, and a personal explanation of what they add up to.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Website palette: white pages, near-black text, IYF green as the only accent */
+    --brand:#22CA38; --brand-dark:#189B2B; --brand-soft:#E9FBEC;
+    --bg:#FFFFFF; --ink:#111111; --muted:#6B7280; --line:#E5E7EB; --card:#FFFFFF;
+    --warn:#DC2626; --warn-soft:#FEE2E2; --dark:#0B0F0D;
+    /* legacy names mapped onto the new palette */
+    --green:var(--ink); --leaf:var(--brand-dark); --moss:var(--brand);
+    --amber:var(--brand); --paper:var(--bg); --mist:var(--line); --coral:var(--warn);
+    /* Website font. Change the family name here once to match iyfindia.org exactly. */
+    --site:"Poppins", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --serif:var(--site);
+    --sans:var(--site);
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *,*::before,*::after{box-sizing:inherit}
+  html,body{height:100%;margin:0}
+  body{
+    font-family:var(--sans); color:var(--ink); background:var(--bg);
+    -webkit-font-smoothing:antialiased; line-height:1.5;
+  }
+  body.report{background:#FAFAFA; color:var(--ink)}
+  button{font:inherit; cursor:pointer}
+  button:focus-visible,a:focus-visible{outline:3px solid var(--amber); outline-offset:3px}
+
+  /* ---------- shell ---------- */
+  .shell{max-width:34rem; margin:0 auto; min-height:100%; display:flex; flex-direction:column; padding:1.25rem 1.25rem 1.5rem}
+  .bar{height:4px; background:var(--line); border-radius:2px; overflow:hidden; margin-bottom:1.5rem}
+  .bar > i{display:block; height:100%; width:0; background:var(--brand); transition:width .35s ease}
+  .screen{display:none; flex:1; flex-direction:column}
+  .screen.on{display:flex}
+
+  /* ---------- start ---------- */
+  .kicker{font-size:.95rem; color:var(--brand-dark); font-weight:600; margin:0 0 .75rem}
+  h1{font-family:var(--serif); font-weight:700; font-size:clamp(2.1rem,8vw,3.1rem); line-height:1.08; letter-spacing:-.02em; margin:0 0 1.25rem}
+  .lede{font-size:1.1rem; color:#374151; max-width:30rem; margin:0 0 .9rem}
+  .fine{color:var(--muted); font-size:.92rem}
+  .grow{flex:1}
+
+  /* ---------- question ---------- */
+  .part{font-size:.95rem; color:var(--amber); margin:0 0 .5rem}
+  .count{color:var(--muted); font-size:.9rem; margin:0 0 1.75rem}
+  .q{font-family:var(--serif); font-weight:600; font-size:clamp(1.45rem,5.8vw,2rem); line-height:1.25; letter-spacing:-.012em; margin:0}
+  .answers{display:grid; gap:.7rem; margin-top:2rem}
+  .yes,.no,.primary,.ghost{
+    width:100%; padding:1.05rem 1.2rem; border-radius:14px; font-size:1.08rem; font-weight:600;
+    border:2px solid transparent; text-align:left; display:flex; justify-content:space-between; align-items:center;
+    transition:transform .12s ease, background .12s ease;
+  }
+  .yes:active,.no:active,.primary:active,.ghost:active{transform:scale(.985)}
+  .yes,.primary{background:var(--brand); color:#062B0F}
+  .no,.ghost{background:transparent; color:var(--ink); border-color:#D1D5DB}
+  .no:hover,.ghost:hover{border-color:var(--ink)}
+  .yes:hover,.primary:hover{background:#1FB933}
+  .yes span,.no span{font-weight:400; opacity:.75; font-size:.95rem}
+  .back{background:none; border:0; color:var(--muted); padding:.6rem 0; margin-top:.75rem; align-self:flex-start; font-size:.95rem; text-decoration:underline; text-underline-offset:3px}
+
+  /* ---------- interstitial ---------- */
+  .inter h2{font-family:var(--serif); font-weight:700; font-size:clamp(2rem,8vw,3rem); line-height:1.05; letter-spacing:-.02em; margin:0 0 1rem}
+
+  /* ---------- report ---------- */
+  .report .bar{display:none}
+  .report .lede{color:var(--ink)}
+  .topbar{display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:1.25rem}
+  .topbar .kicker{margin:0; color:var(--leaf)}
+  .calc{display:inline-flex; align-items:center; gap:.4rem; background:var(--brand); color:#062B0F; text-decoration:none; font-weight:600; font-size:.9rem; padding:.6rem .95rem; border-radius:999px; white-space:nowrap}
+  .calc:hover{background:#1FB933}
+  .verdict{font-family:var(--serif); font-weight:700; font-size:clamp(1.7rem,6.5vw,2.4rem); line-height:1.15; letter-spacing:-.02em; margin:0 0 .5rem; color:var(--ink)}
+  .verdict.warn{color:var(--coral)}
+  .meters{display:grid; gap:.9rem; margin:1.5rem 0 2rem}
+  .meter{background:#fff; border:1px solid var(--mist); border-radius:16px; padding:1rem 1.1rem}
+  .meter .row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:.6rem}
+  .meter .row b{font-size:1.6rem; font-weight:700; color:var(--ink)}
+  .meter .row > span{color:var(--muted); font-size:.92rem}
+  .meter.warned .row b{color:var(--coral)}
+  .dots{display:flex; gap:.4rem}
+  .dots i{flex:1; height:10px; border-radius:6px; background:#EEF2F0}
+  .dots i.on{background:var(--brand)}
+  .meter.warned .dots i.on{background:var(--coral)}
+  .report h2{font-family:var(--serif); font-weight:700; font-size:1.3rem; margin:2rem 0 .35rem; color:var(--ink); letter-spacing:-.01em}
+  .report h2 + p{margin:0 0 1rem; color:var(--muted)}
+  .item{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:1rem 1.1rem; margin-bottom:.75rem; border-left:5px solid var(--brand)}
+  .item.said-yes{border-left-color:var(--coral)}
+  .item .said{font-weight:600; font-size:1.02rem; color:var(--ink); margin:0 0 .5rem; line-height:1.4}
+  .badge{display:inline-block; font-size:.8rem; font-weight:600; padding:.15rem .6rem; border-radius:999px; margin:0 .4rem .5rem 0}
+  .said-yes .badge{background:var(--warn-soft); color:var(--warn)}
+  .said-no .badge{background:var(--brand-soft); color:var(--brand-dark)}
+  .item .hook{display:inline-block; font-size:.8rem; font-weight:600; color:#7C2D12; background:#FFF1E6; padding:.15rem .6rem; border-radius:999px; margin:0 0 .5rem}
+  .probe{color:var(--ink); margin:0; font-size:.95rem}
+  .probe::before{content:"What it was looking for: "; color:var(--muted); font-weight:500}
+  .actions{display:grid; gap:.7rem; margin-top:1.5rem}
+  .report .ghost{color:var(--ink); border-color:#D1D5DB}
+  footer{margin-top:2.5rem; color:var(--muted); font-size:.9rem; line-height:1.45}
+  .report footer{background:var(--dark); color:#D1D5DB; border-radius:18px; padding:1.75rem 1.25rem; text-align:center; margin-top:2.5rem}
+  .report footer img{height:56px; width:auto; display:block; margin:0 auto .75rem}
+  .report footer a{color:var(--brand); font-weight:600; text-decoration:none}
+
+  @media (prefers-reduced-motion: reduce){ .bar > i{transition:none} .yes,.no,.primary,.ghost{transition:none} }
+  @media (min-width:40rem){ .shell{padding:2.5rem 1.5rem} }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="bar" aria-hidden="true"><i id="progress"></i></div>
+
+  <!-- ============ START ============ -->
+  <section class="screen on" id="s-start">
+    <p class="kicker">A two-minute honest check</p>
+    <h1>Is the phone using you?</h1>
+    <p class="lede">Twelve quick questions about ordinary moments with your phone. Answer honestly, and at the end you'll see what they add up to, and one thing you can change tonight.</p>
+    <p class="fine">Nothing is saved or sent anywhere. Answer for yourself, not for anyone watching.</p>
+    <div class="grow"></div>
+    <div class="answers">
+      <button class="primary" id="start">Start the check <span aria-hidden="true">›</span></button>
+    </div>
+  </section>
+
+  <!-- ============ QUESTION ============ -->
+  <section class="screen" id="s-q" aria-live="polite">
+    <p class="count" id="q-count"></p>
+    <h2 class="q" id="q-text"></h2>
+    <div class="grow"></div>
+    <div class="answers">
+      <button class="yes" id="btn-yes">Yes, that's me</button>
+      <button class="no" id="btn-no">No, not really</button>
+    </div>
+    <button class="back" id="btn-back">Go back a question</button>
+  </section>
+
+  <!-- ============ REPORT ============ -->
+  <section class="screen" id="s-report">
+    <div class="topbar">
+      <p class="kicker">Your result</p>
+      <a class="calc" href="https://www.iyfindia.org/screen-time-calculator" target="_blank" rel="noopener">Screen-time calculator <span aria-hidden="true">↗</span></a>
+    </div>
+    <h2 class="verdict" id="verdict"></h2>
+    <p class="lede" id="verdict-line"></p>
+
+    <div class="meters">
+      <div class="meter" id="m-signs">
+        <div class="row"><b><span id="t-signs">0</span> of 6</b><span>signs of dependency</span></div>
+        <div class="dots" id="d-signs"></div>
+      </div>
+      <div class="meter" id="m-hooks">
+        <div class="row"><b><span id="t-hooks">0</span> of 6</b><span>hooks working on you</span></div>
+        <div class="dots" id="d-hooks"></div>
+      </div>
+    </div>
+
+    <h2>What your answers show about you</h2>
+    <p>Six of the twelve questions were about you. Here is what each one was really looking for.</p>
+    <div id="signs-out"></div>
+
+    <h2>How your phone is built to keep you there</h2>
+    <p>The other six were about the apps. Each one points at a feature someone designed on purpose to keep you there.</p>
+    <div id="hooks-out"></div>
+
+    <div class="actions">
+      <a class="calc" style="justify-content:center" href="https://www.iyfindia.org/screen-time-calculator" target="_blank" rel="noopener">Now see how many years your screen is taking <span aria-hidden="true">↗</span></a>
+      <button class="ghost" id="retake">Take it again</button>
+    </div>
+
+    <footer>
+      <a href="https://www.iyfindia.org/" target="_blank" rel="noopener"><img src="https://www.iyfindia.org/assets/White-logo.png" alt="Islamic Youth Federation of India"></a>
+      Screen De-addiction Campus Campaign<br>
+      <a href="https://www.iyfindia.org/" target="_blank" rel="noopener">iyfindia.org</a><br><br>
+      Not a medical diagnosis. If your phone use is causing real distress, talk to someone you trust or a counsellor.
+    </footer>
+  </section>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- about you (dependency signs), phrased sideways ----------
+  const SIGNS = [
+    { q:"This morning, did a screen see your face before any human did?",
+      probe:"Whether the phone owns the first minute of your day, before you have chosen anything.",
+      why:"Your day now begins inside someone else's feed. The brain learns that this is what waking up feels like, and it will ask for the same tomorrow. That is a habit loop, not a decision.",
+      move:"Charge the phone outside the bedroom tonight. The first hour of the day belongs to you." },
+    { q:"In the last hour, has your hand gone to your pocket for no reason you can name?",
+      probe:"Whether checking has become a reflex that fires with no notification at all.",
+      why:"That reflex is phantom checking. Your brain expects a reward from the phone so often that it invents the signal. Most students have felt this and most never notice it.",
+      move:"Look up your unlocks per day in Screen Time or Digital Wellbeing. Knowing the number changes it." },
+    { q:"Does your phone eat with you? At the table, during meals, most days?",
+      probe:"Whether the phone has become your default filler for every gap, even the ones meant for people and rest.",
+      why:"Meals used to be where conversation and unwinding happened. When the phone fills that gap too, there is no minute left in the day that the feed does not own.",
+      move:"Make meals a phone-free zone, starting with tonight's dinner." },
+    { q:"When the battery hits five percent, does something in your chest drop a little too?",
+      probe:"Whether being without the phone produces real discomfort, the tell-tale sign of dependency.",
+      why:"That drop is withdrawal. It is the same feeling that keeps any addiction alive, and it fades within days once you sit through it a few times.",
+      move:"Leave the phone in another room for one hour today and let the itch pass. It does." },
+    { q:"Have you ever deleted an app to take a break, and had it back within a week?",
+      probe:"Whether you have already tried to cut down and found willpower alone was not enough.",
+      why:"Willpower alone loses against a product built by thousands of engineers. That is not weakness. It means you need a plan and a substitute, not another try.",
+      move:"Do not just remove; replace. Choose what fills the freed time before you delete anything." },
+    { q:"Has \u201cone more video\u201d ever cost you a prayer, a chapter, or an hour of sleep?",
+      probe:"Whether the screen is now beating the things you actually value: sleep, study, salah.",
+      why:"The screen is now winning against things you actually value. This is the clearest line between heavy use and dependency.",
+      move:"Keep the phone in another room during study and at prayer times. Out of reach beats out of mind." },
+  ];
+
+  // ---------- about the apps (design hooks), phrased as everyday moments ----------
+  const HOOKS = [
+    { q:"Have you ever reached the end of Instagram or YouTube Shorts? Think about it.",
+      probe:"Whether you have noticed that your feeds were built with no bottom.",
+      hook:"Infinite scroll",
+      why:"You have not, because there is no end. The designer who invented the bottomless feed has said publicly that removing the stopping cue keeps people going, and that he regrets it.",
+      move:"Use social apps in the browser, where feeds often end, or set a fixed number of posts before you open." },
+    { q:"After you put up a story or a post, do you go back to check how many people saw or liked it?",
+      hook:"Likes and view counts",
+      probe:"Whether your sense of approval has been turned into a number you keep checking.",
+      why:"Approval turned into a counter. Facebook's founding president has admitted these features were built to give users small dopamine hits so they would keep coming back.",
+      move:"Hide like counts in settings, or post and close the app for the rest of the day." },
+    { q:"Do you ever refresh a feed you looked at two minutes ago, just in case?",
+      probe:"Whether the unpredictable reward of a refresh has you pulling the lever like a slot machine.",
+      hook:"Surprise rewards",
+      why:"That gesture is a slot machine lever. Sometimes nothing, sometimes gold. Rewards you cannot predict are the most habit-forming pattern known in psychology.",
+      move:"Check at fixed times only, say twice a day. When the surprise goes, the pull goes with it." },
+    { q:"Is there an app you open on some days only so a number next to your name does not reset?",
+      probe:"Whether a streak counter has turned a habit into an obligation.",
+      hook:"Streaks",
+      why:"A counter that turns a habit into an obligation, with guilt built in. You are not using the app; the app is using your fear of losing something.",
+      move:"Let one streak die on purpose this week and notice that nothing happens." },
+    { q:"Every time a notification comes, do you pick up the phone straight away, leaving whatever you were working on?",
+      probe:"Whether a ping has the power to pull you out of anything, the moment it arrives.",
+      hook:"Notifications",
+      why:"Interruptions dressed up as urgency. The colour, the wording and the timing are all tested on millions of people to find what brings you back most often.",
+      move:"Allow notifications only from people, never from apps. Calls and messages stay; everything else goes silent." },
+    { q:"Do you keep getting more of exactly the kind of videos you like, even when you never searched for them?",
+      probe:"Whether you have noticed the algorithm learning your weak spots from what you pause on.",
+      hook:"A feed that studies you",
+      why:"It learns from every pause and every replay and serves you more of the same. That is not your taste being served; it is your weak spot being measured and repeated.",
+      move:"Do not pause on what you do not want more of, and use \u201cnot interested\u201d without mercy." },
+  ];
+
+  // interleave so the two kinds are not obvious while answering
+  const ORDER = [
+    ["s",0],["h",0],["s",2],["h",2],["s",1],["h",1],["s",3],["h",3],["s",5],["h",4],["s",4],["h",5],
+  ];
+  const ALL = ORDER.map(([k, idx]) => k === "s" ? {...SIGNS[idx], part:1, idx} : {...HOOKS[idx], part:2, idx});
+  const answers = new Array(ALL.length).fill(null);
+  let i = 0;
+
+  const $ = id => document.getElementById(id);
+  const screens = ["s-start","s-q","s-report"];
+  function show(id){
+    screens.forEach(s => $(s).classList.toggle("on", s === id));
+    document.body.classList.toggle("report", id === "s-report");
+    window.scrollTo(0,0);
+  }
+  function progress(){ $("progress").style.width = Math.round((i / ALL.length) * 100) + "%"; }
+
+  function renderQ(){
+    const item = ALL[i];
+    $("q-count").textContent = "Question " + (i + 1) + " of " + ALL.length;
+    $("q-text").textContent = item.q;
+    $("btn-back").style.visibility = i === 0 ? "hidden" : "visible";
+    progress();
+    show("s-q");
+  }
+
+  function answer(val){
+    answers[i] = val;
+    i++;
+    if (i >= ALL.length){ report(); return; }
+    renderQ();
+  }
+
+  function report(){
+    const yesSigns = ALL.filter((x, k) => x.part === 1 && answers[k]).sort((a,b) => a.idx - b.idx);
+    const yesHooks = ALL.filter((x, k) => x.part === 2 && answers[k]).sort((a,b) => a.idx - b.idx);
+    const s = yesSigns.length, h = yesHooks.length;
+    $("t-signs").textContent = s;
+    $("t-hooks").textContent = h;
+    const dots = (id, n) => { const el = $(id); el.innerHTML = ""; for (let k = 0; k < 6; k++){ const d = document.createElement("i"); if (k < n) d.className = "on"; el.appendChild(d); } };
+    dots("d-signs", s); dots("d-hooks", h);
+    const warn = s >= 3;
+    $("m-signs").classList.toggle("warned", warn);
+    const v = $("verdict");
+    v.classList.toggle("warn", warn);
+    if (s <= 1){
+      v.textContent = "You are still holding the phone, not the other way round.";
+      $("verdict-line").textContent = "One sign or none. Keep it that way, and read the second part carefully; those hooks are aimed at you too.";
+    } else if (s <= 3){
+      v.textContent = "The phone is winning more often than you think.";
+      $("verdict-line").textContent = "Two or three signs is the warning zone. This is where a habit quietly becomes a dependency.";
+    } else {
+      v.textContent = "This check turned out to be about you.";
+      $("verdict-line").textContent = "Four or more signs. Seeing it clearly is the first step out. Here is what each question was really testing.";
+    }
+
+    const so = $("signs-out"); so.innerHTML = "";
+    ALL.map((x, k) => ({...x, said: answers[k]})).filter(x => x.part === 1).sort((a,b) => a.idx - b.idx)
+       .forEach(x => so.appendChild(itemEl(x)));
+
+    const ho = $("hooks-out"); ho.innerHTML = "";
+    ALL.map((x, k) => ({...x, said: answers[k]})).filter(x => x.part === 2).sort((a,b) => a.idx - b.idx)
+       .forEach(x => ho.appendChild(itemEl(x)));
+
+    progress();
+    show("s-report");
+  }
+
+  function itemEl(x){
+    const d = document.createElement("div"); d.className = "item" + (x.said ? " said-yes" : " said-no");
+    const said = document.createElement("p"); said.className = "said"; said.textContent = x.q; d.appendChild(said);
+    const badge = document.createElement("p"); badge.className = "badge"; badge.textContent = x.said ? "You said yes" : "You said no"; d.appendChild(badge);
+    if (x.hook){ const hk = document.createElement("p"); hk.className = "hook"; hk.textContent = "The trick behind it: " + x.hook; d.appendChild(hk); }
+    const probe = document.createElement("p"); probe.className = "probe"; probe.textContent = x.probe; d.appendChild(probe);
+    return d;
+  }
+
+  $("start").addEventListener("click", () => { i = 0; renderQ(); });
+  $("btn-yes").addEventListener("click", () => answer(true));
+  $("btn-no").addEventListener("click", () => answer(false));
+  $("btn-back").addEventListener("click", () => { if (i > 0){ i--; renderQ(); } });
+  $("retake").addEventListener("click", () => { answers.fill(null); i = 0; show("s-start"); progress(); });
+})();
+</script>
+</body>
+</html>
